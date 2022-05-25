@@ -6,8 +6,17 @@ import turtle
 # each dot has a brain which stores some information about the dot
 # population class might be needed to store all dots and manipulate them
 
-# TODO: create population of dots and let them randomly move around
 screen = turtle.Screen()
-dot = Dot(pos=(0,0), screen=screen)
 
+# goal
+goal = turtle.Turtle(visible=False)
+goal.speed(0)
+goal.penup()
+goal.shape("circle")
+goal.shapesize(0.5, 0.5, 1)
+goal.color("green")
+goal.sety(screen.window_height()/2-20)
+goal.showturtle()
+
+dot = Dot(pos=(0,0), screen=screen)
 dot.move()

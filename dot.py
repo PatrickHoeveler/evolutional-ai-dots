@@ -12,10 +12,11 @@ class Dot:
         self.screen = screen
 
         self.shelly = turtle.Turtle()
-        # self.shelly.shape("circle")
-        # self.shelly.shapesize(0.2, 0.2, 1)
+        self.shelly.shape("circle")
+        self.shelly.shapesize(0.2, 0.2, 1)
         self.shelly.speed(0)
-        self.shelly.pendown()
+        # self.shelly.pendown()
+        self.shelly.penup()
         self.shelly.goto(pos)
         self.border_x = self.screen.window_width() / 2 - 0.02*self.screen.window_width()
         self.border_y = self.screen.window_height() / 2 - 0.02*self.screen.window_height()
