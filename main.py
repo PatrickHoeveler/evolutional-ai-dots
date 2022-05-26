@@ -1,78 +1,53 @@
-from dot import Dot
+from turtle import pos
 import numpy as np
-# import turtle
-# from multiprocessing import Pool
+import pyglet
+from pyglet import shapes
+import load
 
-# # each dot is turtle
-# # each dot has a brain which stores some information about the dot
-# # population class might be needed to store all dots and manipulate them
+# Variables, Considering a vertical oriented window for game
+WIDTH = 1200   # Game Window Width
+HEIGHT = 800  # Game Window Height
+BORDER = 10   # Walls Thickness/Border Thickness
+RADIUS = 3
+dotspeed = (-2, -2)
 
-# screen = turtle.Screen()
+# goal = shapes.Circle(WIDTH/2, HEIGHT/2+HEIGHT/2.5, 10, color=(255, 0, 0), batch=batch)
+# square = shapes.Rectangle(200, 200, 200, 200, color=(55, 55, 255), batch=batch)
+# rectangle = shapes.Rectangle(250, 300, 400, 200, color=(255, 22, 20), batch=batch)
+# rectangle.opacity = 128
+# rectangle.rotation = 33
+# line = shapes.Line(100, 100, 100, 200, width=19, batch=batch)
+# line2 = shapes.Line(150, 150, 444, 111, width=4, color=(200, 20, 20), batch=batch)
+# star = shapes.Star(800, 400, 60, 40, num_spikes=20, color=(255, 255, 0), batch=batch)
 
-# # goal
-# goal = turtle.Turtle(visible=False)
-# goal.speed(0)
-# goal.penup()
-# goal.shape("circle")
-# goal.shapesize(0.5, 0.5, 1)
-# goal.color("green")
-# goal.sety(screen.window_height()/2-20)
-# # goal.sety(20)
-# goal.showturtle()
+class Window(pyglet.window.Window):
+    def __init__(self, *args, **kwargs):
+        super(Window, self).__init__(*args, **kwargs)
 
-
-# population = []
-
-# for i in range(10):
-#     dot = Dot(brainsize=100, pos=(0,0), screen=screen, goal=goal)
-#     population.append(dot)
-# print('population', population)
-
-# for dot in population:
-#     dot.move()
-
-
-# turtle.done()
-
-# import pygame module in this program
-import pygame
-import time
-
-background_colour = (255,255,255)
-
-width = 1200
-height = 800
-
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption('Evolutional AI')
-red = (200,0,0)
-
-circleX = 100
-circleY = 100
-radius = 10
-
-screen.fill(background_colour)
-# pygame.display.flip()
-
-running = True
-
-# run dot moving here
-for i in range(5):
-        # screen.fill(background_colour)
-        pygame.draw.circle(screen,red,(circleX,circleY-i*10),radius)
-        # pygame.draw.circle(screen,red,(circleX,circleY-20),radius)
-
-while running:
-    # print(pygame.mouse.get_pos())
-
-    # pygame.draw.circle(screen,red,(circleX,circleY),radius)
-    
-
-    for event in pygame.event.get():
-
-        if event.type == pygame.QUIT:
-            running = False
+        self.win_size = (WIDTH, HEIGHT)
+        self.main_batch = pyglet.graphics.Batch()
+        self.dots = load.load_dots(self.win_size, RADIUS, speed=dotspeed, batch=self.main_batch)
+        
+    def on_draw(self):
+        self.clear()
+        self.main_batch.draw()
 
 
-    pygame.display.update()
 
+
+game_window = Window(width=WIDTH, height=HEIGHT, caption='Evolutional AI')
+pyglet.gl.glClearColor(1,1,1,1)
+game_objects = game_window.dots
+
+
+
+def update(dt):
+    global game_objects, game_window
+
+    for obj in game_objects:
+        obj.update()
+
+
+if __name__ == '__main__':
+    pyglet.clock.schedule_interval(update, 1/120.0)
+    pyglet.app.run()
