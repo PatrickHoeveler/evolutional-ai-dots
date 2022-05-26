@@ -7,21 +7,21 @@ from brain import Brain
 
 class Dot(pyglet.shapes.Circle):
 
-    def __init__(self, win_size, brain_size, color=(0, 0, 0), goal_pos=None, *args, **kwargs):
+    def __init__(self, win_size=(1200, 800), brain_size=10, color=(0, 0, 0), goal_pos=None, *args, **kwargs):
         super(Dot, self).__init__(*args, **kwargs)
         self.win_size = win_size
         self.brain_size = brain_size
         self.color = color
         self.goal_pos = goal_pos
 
-        self.velocity_x, self.velocity_y = 0.0, 0.0
         self.brain = Brain(size=self.brain_size)
         self.dead = False
+        self.finished = False
         self.index = 0
 
-    def update(self) -> None:
+    def move(self) -> None:
         directions = self.brain.directions
-        print('self.goal_pos', self.goal_pos)
+        # print('self.goal_pos', self.goal_pos)
 
         if(self.index < len(directions) and self.goal_pos):
             newx = self.x + directions[self.index][0]*10
@@ -29,19 +29,24 @@ class Dot(pyglet.shapes.Circle):
 
             border_x = self.win_size[0]
             border_y = self.win_size[1]
-            print(newx, newy)
+            # print(newx, newy)
             # check window borders
             if(newx > border_x or newx < -border_x or newy > border_y or newy < -border_y):
+                print('hit border')
                 self.dead = True
                 return None
             # check if goal is reached
             elif(newx == self.goal_pos[0] and newy == self.goal_pos[1]):
                 self.finished = True
+                self.color = (0, 255, 0)
                 return None
             else:
                 self.x = newx
                 self.y = newy
                 self.index += 1
+        else:
+            self.dead = True
+            return None
 
     def calculate_fitness(self):
         # calculate the distance between the dot last position and the target
@@ -51,3 +56,11 @@ class Dot(pyglet.shapes.Circle):
 
         # less steps should result in higher fitness
         pass
+
+
+
+class Goal(Dot):
+    def __init__(self, win_size, color=(0, 0, 0), *args, **kwargs):
+        super(Goal, self).__init__(*args, **kwargs)
+        self.win_size = win_size
+        self.color = color
