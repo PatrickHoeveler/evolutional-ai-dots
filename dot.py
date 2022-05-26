@@ -1,47 +1,29 @@
 # from pvector import PVector
-import numpy as np
 import turtle
 
 from brain import Brain
 
 
 class Dot:
-    def __init__(self, pos: tuple, screen: turtle.Screen):
+    def __init__(self, brainsize: int, pos: tuple, screen: turtle.Screen, goal: turtle.Turtle):
 
+        self.brainsize = brainsize
         self.pos = pos
         self.screen = screen
+        self.goal = goal
 
-        self.shelly = turtle.Turtle()
-        self.shelly.shape("circle")
-        self.shelly.shapesize(0.2, 0.2, 1)
-        self.shelly.speed(0)
-        # self.shelly.pendown()
-        self.shelly.penup()
-        self.shelly.goto(pos)
-        self.border_x = self.screen.window_width() / 2 - 0.02*self.screen.window_width()
-        self.border_y = self.screen.window_height() / 2 - 0.02*self.screen.window_height()
-        stepsize = int(0.02*self.border_x if self.border_x > self.border_y else 0.02*self.border_y)
-        self.brain = Brain(size=400, stepsize=stepsize)
+
+        self.brain = Brain(size=self.brainsize)
         self.dead = False
+        self.finished = False
 
     def move(self):
         directions = self.brain.directions
+        
 
-        for dir in directions:
-            self.shelly.forward(dir[0])
-            self.shelly.setheading(dir[1])
 
-            shelly_x = self.shelly.pos()[0]
-            shelly_y = self.shelly.pos()[1]
-
-            if(shelly_x > self.border_x or shelly_x < -self.border_x or shelly_y > self.border_y or shelly_y < -self.border_y):
-                self.dead = True
-                # print('out of window for pos', self.shelly.pos())
-                self.shelly.dot()
-                return turtle.done()
-
-        # print('moved in all directions')
-        turtle.done()
+    def get_direction(self, index: int):
+        return self.brain.directions[index]
 
     def calculate_fitness(self):
         # calculate the distance between the dot last position and the target
@@ -51,3 +33,9 @@ class Dot:
 
         # less steps should result in higher fitness
         pass
+
+    def kill_dot(self):
+        self.dead = True
+        
+    def finish(self):
+        self.finished = True
