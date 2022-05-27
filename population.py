@@ -12,6 +12,9 @@ class Population:
         self.radius = radius
         self.batch = batch
         self.generation_count = 0
+        
+        self.start_x = self.win_size[0]/2
+        self.start_y = self.win_size[1]/2
 
         goal_x = self.win_size[0]/2
         goal_y = self.win_size[1]-self.win_size[1]*0.1
@@ -23,13 +26,10 @@ class Population:
     def create_initial_generation(self):
         generation = []
 
-        dot_x = self.win_size[0]/2
-        dot_y = self.win_size[1]/2
-
         generation.append(self.goal)
 
         for i in range(self.size):
-            dot = Dot(x=dot_x, y=dot_y, radius=self.radius,
+            dot = Dot(x=self.start_x, y=self.start_y, radius=self.radius,
                       batch=self.batch, win_size=self.win_size, brain_size=self.brain_size, goal_position=self.goal.position)
 
             generation.append(dot)
@@ -38,6 +38,7 @@ class Population:
     def update(self):
         # less steps should result in higher fitness
         self.natural_selection()
+        print('self.generation_count', self.generation_count)
 
     def natural_selection(self):
         new_generation = []
@@ -51,9 +52,10 @@ class Population:
         new_generation.append(best_dot)
 
         for dot in self.generation:
-            if(type(dot) != Goal and dot != best_dot):
+            if(type(dot) != Goal and dot.brain.directions != best_dot.brain.directions):
                 parent_dot = self.select_parent(fitness_sum)
                 # simple clone of parent will be the new baby
+                print('parent_dot', parent_dot)
                 baby_dot = parent_dot.clone(batch=self.batch)
                 # mutate the baby
                 baby_dot.mutate()
@@ -73,7 +75,7 @@ class Population:
         for dot in self.generation:
             if(type(dot) != Goal):
                 if(dot.finished):
-                    fitness = 1/16.0 * 10000.0/dot.index*dot.index
+                    fitness = 10000.0/dot.index*dot.index
                 else:
                     distance_to_goal = dot.distance_to_goal()
                     fitness = 1/(distance_to_goal*distance_to_goal)
@@ -97,6 +99,8 @@ class Population:
         for dot in self.generation:
             if(type(dot) != Goal):
                 if(dot.fitness == max_fitness):
-                    dot.set_best()
-                    return dot
+                    best_dot = Dot(x=self.start_x, y=self.start_y, radius=self.radius,
+                      batch=self.batch, win_size=self.win_size, brain_size=self.brain_size, goal_position=self.goal.position, is_best=True)
+                    best_dot.brain.directions = dot.brain.directions.copy()
+                    return best_dot
 

@@ -43,7 +43,7 @@ class Window(pyglet.window.Window):
 
 def update(dt):
     global game_objects, game_window
-    # print('game_objects', game_objects)
+    print('len(game_objects)', len(game_objects))
     finished_dead_counter = 0
 
 
@@ -55,7 +55,7 @@ def update(dt):
             else:
                 dot.move()
 
-    # print('finished_dead_counter', finished_dead_counter, 'POPULATION_SIZE', POPULATION_SIZE)
+    print('finished_dead_counter', finished_dead_counter, 'POPULATION_SIZE', POPULATION_SIZE)
     if(finished_dead_counter == POPULATION_SIZE):
         # print('update_population')
         game_window.population.update()

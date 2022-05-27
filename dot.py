@@ -8,12 +8,15 @@ from brain import Brain
 
 class Dot(pyglet.shapes.Circle):
 
-    def __init__(self, win_size=(1200, 800), brain_size=10, color=(0, 0, 0), goal_position=None, *args, **kwargs):
+    def __init__(self, win_size=(1200, 800), brain_size=10, color=(0, 0, 0), goal_position=None, is_best=False, *args, **kwargs):
         super(Dot, self).__init__(*args, **kwargs)
         self.win_size = win_size
         self.brain_size = brain_size
         self.color = color
         self.goal_position = goal_position
+        self.is_best = is_best
+        if(self.is_best):
+            self.color = (0, 255, 0)
 
         self.brain = Brain(size=self.brain_size)
         self.dead = False
@@ -70,14 +73,6 @@ class Dot(pyglet.shapes.Circle):
     def mutate(self):
         self.brain.mutate()
 
-    def set_best(self):
-        self.x = self.start_position[0]
-        self.y = self.start_position[1]
-        self.index = 0
-        self.dead = False
-        self.finished = False
-        self.fitness = 0.0
-        self.color = (0, 255, 0)
 
 class Goal(Dot):
     def __init__(self, win_size, color=(255, 0, 0), *args, **kwargs):
