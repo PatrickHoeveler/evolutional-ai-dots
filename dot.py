@@ -22,6 +22,7 @@ class Dot(pyglet.shapes.Circle):
         self.fitness = 0.0
         self.start_position = (self.x, self.y)
 
+
     def move(self) -> None:
         directions = self.brain.directions
         # print('self.goal_position', self.goal_position)
@@ -39,9 +40,8 @@ class Dot(pyglet.shapes.Circle):
                 self.dead = True
                 return None
             # check if goal is reached
-            elif(newx == self.goal_position[0] and newy == self.goal_position[1]):
+            elif(self.distance_to_goal() < self.radius):
                 self.finished = True
-                self.color = (0, 255, 0)
                 return None
             else:
                 self.x = newx
@@ -53,7 +53,7 @@ class Dot(pyglet.shapes.Circle):
 
     def distance_to_goal(self):
         # calculate the distance between the dot last position and the target
-        distance = sqrt((self.position[0]-self.goal_position[1])
+        distance = sqrt((self.position[0]-self.goal_position[0])
                         ** 2+(self.position[1]-self.goal_position[1])**2)
         # print('distance to goal', distance)
         return distance
@@ -61,15 +61,23 @@ class Dot(pyglet.shapes.Circle):
     # def set_fitness(self, fitness: float):
     #     self.fitness = fitness
 
-    def clone(self):
+    def clone(self, batch):
         clone = Dot(x=self.start_position[0], y=self.start_position[1], radius=self.radius, win_size=self.win_size,
-                    brain_size=self.brain_size, color=self.color, goal_position=self.goal_position)
+                    brain_size=self.brain_size, goal_position=self.goal_position, batch=batch)
         clone.brain = self.brain.clone()
         return clone
 
     def mutate(self):
         self.brain.mutate()
 
+    def set_best(self):
+        self.x = self.start_position[0]
+        self.y = self.start_position[1]
+        self.index = 0
+        self.dead = False
+        self.finished = False
+        self.fitness = 0.0
+        self.color = (0, 255, 0)
 
 class Goal(Dot):
     def __init__(self, win_size, color=(255, 0, 0), *args, **kwargs):

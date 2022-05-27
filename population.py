@@ -45,11 +45,16 @@ class Population:
         # calculate the fitness
         # dots with closest distance to the goal will have highest fitness
         fitness_sum = self.calculate_fitness_sum()
+
+        # add best dot to generation
+        best_dot = self.get_best_dot()
+        new_generation.append(best_dot)
+
         for dot in self.generation:
-            if(type(dot) != Goal):
+            if(type(dot) != Goal and dot != best_dot):
                 parent_dot = self.select_parent(fitness_sum)
                 # simple clone of parent will be the new baby
-                baby_dot = parent_dot.clone()
+                baby_dot = parent_dot.clone(batch=self.batch)
                 # mutate the baby
                 baby_dot.mutate()
                 new_generation.append(baby_dot)
@@ -67,8 +72,11 @@ class Population:
         fitness_sum = 0.0
         for dot in self.generation:
             if(type(dot) != Goal):
-                distance_to_goal = dot.distance_to_goal()
-                fitness = 1/(distance_to_goal*distance_to_goal)
+                if(dot.finished):
+                    fitness = 1/16.0 * 10000.0/dot.index*dot.index
+                else:
+                    distance_to_goal = dot.distance_to_goal()
+                    fitness = 1/(distance_to_goal*distance_to_goal)
                 dot.fitness = fitness
                 # dot.set_fitness(fitness)
                 fitness_sum += fitness
@@ -83,3 +91,12 @@ class Population:
                 running_sum += dot.fitness
                 if(running_sum >= rand):
                     return dot
+
+    def get_best_dot(self):
+        max_fitness = max([x.fitness for x in self.generation])
+        for dot in self.generation:
+            if(type(dot) != Goal):
+                if(dot.fitness == max_fitness):
+                    dot.set_best()
+                    return dot
+
