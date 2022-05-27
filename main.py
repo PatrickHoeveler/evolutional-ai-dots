@@ -10,7 +10,7 @@ WIDTH = 600   # Game Window Width
 HEIGHT = 600  # Game Window Height
 BORDER = 10   # Walls Thickness/Border Thickness
 RADIUS = 3
-POPULATION_SIZE = 10
+POPULATION_SIZE = 100
 BRAIN_SIZE = 100
 
 # goal = shapes.Circle(WIDTH/2, HEIGHT/2+HEIGHT/2.5, 10, color=(255, 0, 0), batch=batch)
@@ -43,7 +43,7 @@ class Window(pyglet.window.Window):
 
 def update(dt):
     global game_objects, game_window
-    print('len(game_objects)', len(game_objects))
+    # print('len(game_objects)', len(game_objects))
     finished_dead_counter = 0
 
 
@@ -55,7 +55,7 @@ def update(dt):
             else:
                 dot.move()
 
-    print('finished_dead_counter', finished_dead_counter, 'POPULATION_SIZE', POPULATION_SIZE)
+    # print('finished_dead_counter', finished_dead_counter, 'POPULATION_SIZE', POPULATION_SIZE)
     if(finished_dead_counter == POPULATION_SIZE):
         # print('update_population')
         game_window.population.update()
@@ -70,5 +70,5 @@ if __name__ == '__main__':
     pyglet.gl.glClearColor(1, 1, 1, 1)
     game_objects = game_window.population.generation
 
-    pyglet.clock.schedule_interval(update, 1/300.0)
+    pyglet.clock.schedule_interval(update, 1/120.0)
     pyglet.app.run()

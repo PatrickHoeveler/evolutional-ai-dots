@@ -55,7 +55,7 @@ class Population:
             if(type(dot) != Goal and dot.brain.directions != best_dot.brain.directions):
                 parent_dot = self.select_parent(fitness_sum)
                 # simple clone of parent will be the new baby
-                print('parent_dot', parent_dot)
+                # print('parent_dot', parent_dot)
                 baby_dot = parent_dot.clone(batch=self.batch)
                 # mutate the baby
                 baby_dot.mutate()
@@ -75,7 +75,7 @@ class Population:
         for dot in self.generation:
             if(type(dot) != Goal):
                 if(dot.finished):
-                    fitness = 10000.0/dot.index*dot.index
+                    fitness = 1/16.0 * 10000.0/dot.index*dot.index
                 else:
                     distance_to_goal = dot.distance_to_goal()
                     fitness = 1/(distance_to_goal*distance_to_goal)
