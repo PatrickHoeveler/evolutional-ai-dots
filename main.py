@@ -10,7 +10,7 @@ WIDTH = 600   # Game Window Width
 HEIGHT = 600  # Game Window Height
 BORDER = 10   # Walls Thickness/Border Thickness
 RADIUS = 3
-POPULATION_SIZE = 100
+POPULATION_SIZE = 400
 BRAIN_SIZE = 100
 
 # goal = shapes.Circle(WIDTH/2, HEIGHT/2+HEIGHT/2.5, 10, color=(255, 0, 0), batch=batch)

@@ -8,7 +8,7 @@ from brain import Brain
 
 class Dot(pyglet.shapes.Circle):
 
-    def __init__(self, win_size=(1200, 800), brain_size=10, color=(0, 0, 0), goal_position=None, is_best=False, *args, **kwargs):
+    def __init__(self, win_size=(1200, 800), brain_size=10, color=(0, 0, 0), goal_position=None, is_best=False, max_step=10, *args, **kwargs):
         super(Dot, self).__init__(*args, **kwargs)
         self.win_size = win_size
         self.brain_size = brain_size
@@ -17,6 +17,8 @@ class Dot(pyglet.shapes.Circle):
         self.is_best = is_best
         if(self.is_best):
             self.color = (0, 255, 0)
+
+        self.max_step = max_step
 
         self.brain = Brain(size=self.brain_size)
         self.dead = False
@@ -30,7 +32,7 @@ class Dot(pyglet.shapes.Circle):
         directions = self.brain.directions
         # print('self.goal_position', self.goal_position)
 
-        if(self.index < len(directions) and self.goal_position):
+        if(self.index < len(directions) and self.goal_position and self.index < self.max_step):
             newx = self.x + directions[self.index][0]*10
             newy = self.y + directions[self.index][1]*10
 
@@ -43,7 +45,11 @@ class Dot(pyglet.shapes.Circle):
                 self.dead = True
                 return None
             # check if goal is reached
-            elif(self.distance_to_goal() < self.radius):
+            # elif(self.distance_to_goal() < self.radius):
+            # elif(self.x == self.goal_position[0] and self.y == self.goal_position[1]):
+            elif(round(self.distance_to_goal(), 4) <self.radius):
+                # print('self.radius', self.radius, 'round(self.distance_to_goal(), 4)', round(self.distance_to_goal(), 4))
+                # print('goal reached: self.index', self.index)
                 self.finished = True
                 return None
             else:
@@ -56,9 +62,11 @@ class Dot(pyglet.shapes.Circle):
 
     def distance_to_goal(self):
         # calculate the distance between the dot last position and the target
-        distance = sqrt((self.position[0]-self.goal_position[0])
-                        ** 2+(self.position[1]-self.goal_position[1])**2)
+        distance = sqrt((self.goal_position[0]-self.position[0])
+                        **2 + (self.goal_position[1]-self.position[1])**2)
+        
         # print('distance to goal', distance)
+        
         return distance
 
     # def set_fitness(self, fitness: float):
