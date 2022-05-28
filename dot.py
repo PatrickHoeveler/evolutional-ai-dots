@@ -47,7 +47,7 @@ class Dot(pyglet.shapes.Circle):
             # check if goal is reached
             # elif(self.distance_to_goal() < self.radius):
             # elif(self.x == self.goal_position[0] and self.y == self.goal_position[1]):
-            elif(round(self.distance_to_goal(), 4) <self.radius):
+            elif(self.distance_to_goal() <self.radius):
                 # print('self.radius', self.radius, 'round(self.distance_to_goal(), 4)', round(self.distance_to_goal(), 4))
                 # print('goal reached: self.index', self.index)
                 self.finished = True
@@ -64,7 +64,7 @@ class Dot(pyglet.shapes.Circle):
         # calculate the distance between the dot last position and the target
         distance = sqrt((self.goal_position[0]-self.position[0])
                         **2 + (self.goal_position[1]-self.position[1])**2)
-        
+        # print('distance', round(distance, 4), 'radius', self.radius, 'is_best', self.is_best)
         # print('distance to goal', distance)
         
         return distance

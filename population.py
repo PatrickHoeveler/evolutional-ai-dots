@@ -53,7 +53,6 @@ class Population:
         # add best dot to generation
         best_dot = self.get_best_dot()
         new_generation.append(best_dot)
-
         # add new mutated babies from selected parents
         for i in range(self.size-1):
             parent_dot = self.select_parent(fitness_sum)
@@ -82,11 +81,15 @@ class Population:
             fitness = 0.0
             if(type(dot) != Goal):
                 if(dot.finished):
-                    fitness = 100000.0/float(dot.index*dot.index)
+                    fitness = 1000000.0/float(dot.index*dot.index)
                 else:
                     distance_to_goal = dot.distance_to_goal()
                     fitness = 1/(distance_to_goal*distance_to_goal)
                 # dot.fitness = round(fitness,4)
+                finish_fit = 1000000.0/float(dot.index*dot.index)
+                normal_fit =  1/(dot.distance_to_goal()*dot.distance_to_goal())
+                if(normal_fit>finish_fit):
+                    print('finished vs normal fitness', finish_fit, normal_fit)
                 dot.fitness = fitness
                 fitness_sum += fitness
         return fitness_sum
@@ -102,6 +105,9 @@ class Population:
                     return dot
 
     def get_best_dot(self):
+        # fitness_list = [x.fitness for x in self.generation]
+        # fitness_list.sort(reverse=True)
+        # print('sorted fitness list', fitness_list)
         max_fitness = max([x.fitness for x in self.generation])
         # print('max_fitness', max_fitness)
         for dot in self.generation:
@@ -111,7 +117,7 @@ class Population:
                       batch=self.batch, win_size=self.win_size, brain_size=self.brain_size, goal_position=self.goal.position, is_best=True)
                     best_dot.brain.directions = dot.brain.directions.copy()
                     print('best_dot fitness', dot.fitness, 'best_dot index', dot.index)
-                    print('best_dot finished', dot.finished)
+                    print('best_dot finished', dot.finished, 'distance to goal', dot.distance_to_goal())
                     self.max_step = dot.index
                     return best_dot
 
