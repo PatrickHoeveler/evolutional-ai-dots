@@ -10,7 +10,7 @@ WIDTH = 800   # Game Window Width
 HEIGHT = 700  # Game Window Height
 BORDER = 10   # Walls Thickness/Border Thickness
 RADIUS = 3
-POPULATION_SIZE = 50
+POPULATION_SIZE = 1
 BRAIN_SIZE = 100
 
 
@@ -33,9 +33,8 @@ class Window(pyglet.window.Window):
 
 
     def set_elements(self):
-        self.elements = [x.dot for x in self.population.generation]
-        self.elements.append(self.goal.dot)
-        print(self.elements)
+        self.elements = [x for x in self.population.generation]
+        self.elements.append(self.goal)
 
     def on_draw(self):
         self.clear()
@@ -43,13 +42,15 @@ class Window(pyglet.window.Window):
 
 
     def update(self, dt):
-
-        # for element in self.elements:
-        #     # print('dot.finished', dot.finished, 'dot.dead', dot.dead)
-        #     if element.finished or element.dead:
-        #         finished_dead_counter += 1
-        #     else:
-        #         element.move()
+        finished_dead_counter = 0
+        for element in self.elements:
+            if(type(element) == Element):
+                if(element.dead or element.finished):
+                    finished_dead_counter += 1
+                else:
+                    element.move()
+            if(finished_dead_counter == len(self.elements)):
+                self.population.update()
 
         # print('finished_dead_counter', finished_dead_counter, 'POPULATION_SIZE', POPULATION_SIZE)
         # if(finished_dead_counter == POPULATION_SIZE):
@@ -64,5 +65,5 @@ class Window(pyglet.window.Window):
 if __name__ == '__main__':
     window = Window(width=WIDTH, height=HEIGHT, caption='Evolutional AI')
     pyglet.gl.glClearColor(1, 1, 1, 1)
-    pyglet.clock.schedule_interval(window.update, 1/120.0)
+    pyglet.clock.schedule_interval(window.update, 1/1.0)
     pyglet.app.run()

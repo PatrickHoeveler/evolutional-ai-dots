@@ -22,11 +22,27 @@ class Element():
         self.radius = radius
         self.batch = batch
         self.win_size = win_size
+
         self.color = (0, 0, 0)
         self.dot = pyglet.shapes.Circle(x=self.init_position[0], y=self.init_position[1], radius=self.radius, batch=self.batch, color=self.color)
+        self.dead = False
+        self.finished = False
+        self.step = 0
 
-    def move(self) -> None:
+    def move(self):
         directions = self.brain.directions
+        print('len(directions)', len(directions))
+        for direction in directions:
+            self.dot.x += direction[0]*10
+            self.dot.y += direction[1]*10
+
+            if(self.dot.x < 0 or self.dot.x > self.win_size[0] or self.dot.y < 0 or self.dot.y > self.win_size[1]):
+                self.dead = True
+                return 'dead'
+            if(self.step == len(directions)):
+                self.dead = True
+                return 'dead'
+            self.step += 1
 
     def distance_to_goal(self):
         # calculate the distance between the dot last position and the target

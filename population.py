@@ -28,7 +28,9 @@ class Population:
         self.generation = generation
 
     def update(self):
-        self.natural_selection()
+        self.generation = []
+        print('updated generation')
+        # self.natural_selection()
 
     def natural_selection(self):
         pass
