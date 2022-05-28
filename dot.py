@@ -26,34 +26,36 @@ class Dot(pyglet.shapes.Circle):
         self.index = 0
         self.fitness = 0.0
         self.start_position = (self.x, self.y)
+        self.step_size = 50
 
 
     def move(self) -> None:
         directions = self.brain.directions
         # print('self.goal_position', self.goal_position)
 
-        if(self.index < len(directions) and self.index < self.max_step):
-            newx = self.x + directions[self.index][0]*10
-            newy = self.y + directions[self.index][1]*10
+        if(self.index < len(directions) and self.index <= self.max_step):
+            newx = self.x + directions[self.index][0]*self.step_size
+            newy = self.y + directions[self.index][1]*self.step_size
 
             border_x = self.win_size[0]
             border_y = self.win_size[1]
             # print(newx, newy)
             # check window borders
-            if(self.is_best):
-                print('distance, radius, index', self.distance_to_goal(), float(self.radius), self.index)
+            # if(self.is_best):
+                # print('distance, radius, index', self.distance_to_goal(), float(self.radius), self.index)
+            if(self.distance_to_goal() <= float(self.radius)):
+                # print('tach aus finished')
+                # print('self.radius', self.radius, 'round(self.distance_to_goal(), 4)', round(self.distance_to_goal(), 4))
+                print('finished: with distance of', self.distance_to_goal())
+                self.finished = True
+                return None 
             if(newx > border_x or newx < 0 or newy > border_y or newy < 0):
-                print('hit border')
+                # print('hit border')
                 self.dead = True
                 return None
             # check if goal is reached
             # elif(self.distance_to_goal() < self.radius):
             # elif(self.x == self.goal_position[0] and self.y == self.goal_position[1]):
-            elif(self.distance_to_goal() < float(self.radius)):
-                # print('self.radius', self.radius, 'round(self.distance_to_goal(), 4)', round(self.distance_to_goal(), 4))
-                # print('goal reached: self.index', self.index)
-                self.finished = True
-                return None
             else:
                 self.x = newx
                 self.y = newy

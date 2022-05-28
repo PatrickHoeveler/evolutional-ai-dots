@@ -33,8 +33,13 @@ class Population:
 
     def update(self):
         # less steps should result in higher fitness
+        print('all finishers distance to goal:', [x.distance_to_goal() for x in self.generation if x.finished])
+        print('old best_dot distance:', self.generation[0].distance_to_goal(), 'old best_dot finished', self.generation[0].finished)
+        print('old best_dot distance calculated:', [x.distance_to_goal() for x in self.generation if x.is_best])
+
         self.natural_selection()
         print('self.generation_count', self.generation_count)
+        print('---')
 
     def natural_selection(self):
         # remove the 10% worst dots
@@ -78,15 +83,11 @@ class Population:
             fitness = 0.0
             if(type(dot) != Goal):
                 if(dot.finished):
-                    fitness = 1000000.0/float(dot.index*dot.index)
+                    fitness = 1.0/16.0 + 100000.0/float(dot.index*dot.index)
                 else:
                     distance_to_goal = dot.distance_to_goal()
-                    fitness = 1/(distance_to_goal*distance_to_goal)
+                    fitness = 1.0/(distance_to_goal*distance_to_goal)
                 # dot.fitness = round(fitness,4)
-                finish_fit = 1000000.0/float(dot.index*dot.index)
-                normal_fit =  1/(dot.distance_to_goal()*dot.distance_to_goal())
-                if(normal_fit>finish_fit):
-                    print('finished vs normal fitness', finish_fit, normal_fit)
                 dot.fitness = fitness
                 fitness_sum += fitness
         return fitness_sum
@@ -96,10 +97,10 @@ class Population:
         rand = random.uniform(0, fitness_sum)
         running_sum = 0.0
         for dot in self.generation:
-            if(type(dot) != Goal):
-                running_sum += dot.fitness
-                if(running_sum >= rand):
-                    return dot
+            # if(type(dot) != Goal):
+            running_sum += dot.fitness
+            if(running_sum >= rand):
+                return dot
 
     def get_best_dot(self):
         # fitness_list = [x.fitness for x in self.generation]
@@ -108,15 +109,22 @@ class Population:
         max_fitness = max([x.fitness for x in self.generation])
         # print('max_fitness', max_fitness)
         for dot in self.generation:
-            if(type(dot) != Goal):
-                if(dot.fitness == max_fitness):
-                    best_dot = Dot(x=self.start_x, y=self.start_y, radius=self.radius,
-                      batch=self.batch, win_size=self.win_size, brain_size=self.brain_size, goal_position=self.goal.position, is_best=True)
-                    best_dot.brain.directions = dot.brain.directions.copy()
-                    print('best_dot fitness', dot.fitness, 'best_dot index', dot.index)
-                    print('best_dot finished', dot.finished, 'distance to goal', dot.distance_to_goal())
-                    self.max_step = dot.index
-                    return best_dot
+            # if(type(dot) != Goal):
+            if(dot.fitness == max_fitness):
+                self.max_step = dot.index
+                best_dot = Dot(x=self.start_x, y=self.start_y, radius=self.radius,
+                    batch=self.batch, win_size=self.win_size, brain_size=self.brain_size, goal_position=self.goal.position, is_best=True, max_step=self.max_step)
+                best_dot.brain.directions = dot.brain.directions.copy()
+                # print('old best dot.fitness and index', dot.fitness, dot.index)
+                # if(dot.finished==False and dot.distance_to_goal()<3):
+                    # print('---')
+                    # print('last best dot', dot)
+                    # print('best_dot fitness', dot.fitness, 'best_dot index', dot.index)
+                    # print('best_dot finished', dot.finished, 'distance to goal', dot.distance_to_goal())
+                    # print('new best_dot.index', best_dot.index, 'best_dot.max_step', best_dot.max_step)
+                    # print('new best_dot obj', best_dot)
+                    # print('---')
+                return best_dot
 
     def remove_worst_dots(self):
         # remove the 10% worst dots

@@ -6,11 +6,11 @@ from dot import Dot, Goal
 from population import Population
 
 # Variables, Considering a vertical oriented window for game
-WIDTH = 600   # Game Window Width
-HEIGHT = 600  # Game Window Height
+WIDTH = 800   # Game Window Width
+HEIGHT = 700  # Game Window Height
 BORDER = 10   # Walls Thickness/Border Thickness
 RADIUS = 3
-POPULATION_SIZE = 400
+POPULATION_SIZE = 50
 BRAIN_SIZE = 100
 
 # goal = shapes.Circle(WIDTH/2, HEIGHT/2+HEIGHT/2.5, 10, color=(255, 0, 0), batch=batch)
@@ -47,7 +47,7 @@ class Window(pyglet.window.Window):
         
     def get_goal(self):
         goal_x = self.win_size[0]/2
-        goal_y = self.win_size[1]-self.win_size[1]*0.1
+        goal_y = self.win_size[1]-self.win_size[1]*0.3
         goal = Goal(x=goal_x, y=goal_y, radius=RADIUS*2, color=(255, 0, 0),
                             batch=self.main_batch, win_size=self.win_size)
         return goal
