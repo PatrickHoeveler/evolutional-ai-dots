@@ -5,7 +5,7 @@ import random
 
 class Population:
 
-    def __init__(self, size: int, brain_size: int, win_size: Tuple, radius: float, batch=None):
+    def __init__(self, size: int, brain_size: int, win_size: Tuple, radius: float,  goal:Goal, batch=None):
         self.size = size
         self.brain_size = brain_size
         self.win_size = win_size
@@ -15,18 +15,14 @@ class Population:
         self.max_step = self.brain_size
         self.start_x = self.win_size[0]/2
         self.start_y = self.win_size[1]/4
-
-        goal_x = self.win_size[0]/2
-        goal_y = self.win_size[1]-self.win_size[1]*0.1
-        self.goal = Goal(x=goal_x, y=goal_y, radius=self.radius*2, color=(255, 0, 0),
-                         batch=self.batch, win_size=self.win_size)
+        self.goal = goal
 
         self.generation = self.create_initial_generation()
 
     def create_initial_generation(self):
         generation = []
 
-        generation.append(self.goal)
+        # generation.append(self.goal)
 
         for i in range(self.size):
             dot = Dot(x=self.start_x, y=self.start_y, radius=self.radius,
@@ -45,7 +41,7 @@ class Population:
         self.remove_worst_dots()
 
         new_generation = []
-        new_generation.append(self.goal)
+        # new_generation.append(self.goal)
         # calculate the fitness
         # dots with closest distance to the goal will have highest fitness
         fitness_sum = self.calculate_fitness_sum()
@@ -72,6 +68,7 @@ class Population:
         self.generation = new_generation
         self.set_max_step()
         # print('--')
+        # print('old_generation', self.generation, 'len', len(self.generation))
         # [print(x.position) for x in self.generation]
 
 

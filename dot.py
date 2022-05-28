@@ -32,7 +32,7 @@ class Dot(pyglet.shapes.Circle):
         directions = self.brain.directions
         # print('self.goal_position', self.goal_position)
 
-        if(self.index < len(directions) and self.goal_position and self.index < self.max_step):
+        if(self.index < len(directions) and self.index < self.max_step):
             newx = self.x + directions[self.index][0]*10
             newy = self.y + directions[self.index][1]*10
 
@@ -40,6 +40,8 @@ class Dot(pyglet.shapes.Circle):
             border_y = self.win_size[1]
             # print(newx, newy)
             # check window borders
+            if(self.is_best):
+                print('distance, radius, index', self.distance_to_goal(), float(self.radius), self.index)
             if(newx > border_x or newx < 0 or newy > border_y or newy < 0):
                 print('hit border')
                 self.dead = True
@@ -47,7 +49,7 @@ class Dot(pyglet.shapes.Circle):
             # check if goal is reached
             # elif(self.distance_to_goal() < self.radius):
             # elif(self.x == self.goal_position[0] and self.y == self.goal_position[1]):
-            elif(self.distance_to_goal() <self.radius):
+            elif(self.distance_to_goal() < float(self.radius)):
                 # print('self.radius', self.radius, 'round(self.distance_to_goal(), 4)', round(self.distance_to_goal(), 4))
                 # print('goal reached: self.index', self.index)
                 self.finished = True
