@@ -1,11 +1,11 @@
-from element import Element, Goal
+from element import Element, Goal, Obstacle
 from typing import Tuple
 import random
 
 
 class Population:
 
-    def __init__(self, size: int, brain_size: int, win_size: Tuple, radius: float,  goal: Goal, batch=None):
+    def __init__(self, size: int, brain_size: int, win_size: Tuple, radius: float,  goal: Goal, obstacles: list[Obstacle], velocity: int, batch=None):
         self.size = size
         self.brain_size = brain_size
         self.win_size = win_size
@@ -13,6 +13,8 @@ class Population:
         self.batch = batch
         self.generation_count = 0
         self.goal = goal
+        self.obstacles = obstacles
+        self.velocity = velocity
         self.generation = []
         self.set_initial_generation()
 
@@ -20,10 +22,12 @@ class Population:
         generation = []
         for i in range(self.size):
             element = Element(goal=self.goal,
+                              obstacles=self.obstacles,
                               brain_size=self.brain_size,
                               radius=self.radius,
                               batch=self.batch,
-                              win_size=self.win_size)
+                              win_size=self.win_size, 
+                              velocity=self.velocity)
             generation.append(element)
         self.generation = generation
 
@@ -38,7 +42,8 @@ class Population:
         fitness_sum = self.calculate_fitness_sum()
 
         # add best dot to generation
-        best_element = [x for x in self.generation if x.fitness == max(self.generation, key=lambda x: x.fitness).fitness][0]
+        best_element = [x for x in self.generation if x.fitness == max(
+            self.generation, key=lambda x: x.fitness).fitness][0]
         print('best_element.fitness', best_element.fitness)
         new_generation.append(best_element.clone(color=(0, 255, 0)))
 
