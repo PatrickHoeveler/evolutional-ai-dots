@@ -27,44 +27,44 @@ class Population:
             generation.append(element)
         self.generation = generation
 
-    def update(self):
-        self.generation = []
-        print('updated generation')
-        # self.natural_selection()
+    def evolve(self):
+        # self.generation = []
+        self.natural_selection()
+
+        # self.set_initial_generation()
 
     def natural_selection(self):
-        pass
-        # new_generation = []
-        # fitness_sum = self.calculate_fitness_sum()
+        new_generation = []
+        fitness_sum = self.calculate_fitness_sum()
+
         # add best dot to generation
-        # best_dot = self.get_best_dot()
-        # new_generation.append(best_dot)
-        # add new mutated babies from selected parents
-        # for i in range(self.size-1):
-        #     parent_dot = self.select_parent(fitness_sum)
-        #     # simple clone of parent will be the new baby
-        #     baby_dot = parent_dot.clone(batch=self.batch)
+        best_element = [x for x in self.generation if x.fitness == max(self.generation, key=lambda x: x.fitness).fitness][0]
+        print('best_element.fitness', best_element.fitness)
+        new_generation.append(best_element.clone(color=(0, 255, 0)))
 
-        #     # mutate the baby
-        #     baby_dot.mutate()
-        #     new_generation.append(baby_dot)
+        # add remaining population to generation
+        for i in range(self.size-1):
+            parent_element = self.select_parent(fitness_sum)
+            child_element = parent_element.clone()
 
-        # self.generation_count += 1
+            # mutate the baby
+            child_element.mutate()
+            new_generation.append(child_element)
+
+        self.generation = new_generation
+        self.generation_count += 1
 
     def calculate_fitness_sum(self):
-        # TODO: get fitness sum of all dots
-        pass
+        fitness_sum = 0
+        for element in self.generation:
+            fitness_sum += element.fitness
+        return fitness_sum
 
     def select_parent(self, fitness_sum: float):
         # select parent based on fitness
         rand = random.uniform(0, fitness_sum)
         running_sum = 0.0
-        for dot in self.generation:
-            # if(type(dot) != Goal):
-            running_sum += dot.fitness
+        for element in self.generation:
+            running_sum += element.fitness
             if(running_sum >= rand):
-                return dot
-
-    def get_best_dot(self):
-        # TODO: get best dot by highest fitness
-        pass
+                return element

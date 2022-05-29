@@ -15,51 +15,65 @@ class Goal():
 
 class Element():
 
-    def __init__(self, goal:Goal, brain_size: int, radius: float, batch: pyglet.graphics.Batch, win_size: Tuple):
+    def __init__(self, goal:Goal, brain_size: int, radius: float, batch: pyglet.graphics.Batch, win_size: Tuple, color=(0,0,0)):
         self.goal = goal
+        self.brain_size = brain_size
         self.brain = Brain(size=brain_size)
         self.init_position = (win_size[0]/2, win_size[1]/2)
         self.radius = radius
         self.batch = batch
         self.win_size = win_size
 
-        self.color = (0, 0, 0)
+        self.color = color
         self.dot = pyglet.shapes.Circle(x=self.init_position[0], y=self.init_position[1], radius=self.radius, batch=self.batch, color=self.color)
         self.dead = False
         self.finished = False
         self.step = 0
+        self.fitness = 0
 
     def move(self):
         directions = self.brain.directions
-        print('len(directions)', len(directions))
-        for direction in directions:
-            self.dot.x += direction[0]*10
-            self.dot.y += direction[1]*10
 
-            if(self.dot.x < 0 or self.dot.x > self.win_size[0] or self.dot.y < 0 or self.dot.y > self.win_size[1]):
-                self.dead = True
-                return 'dead'
-            if(self.step == len(directions)):
-                self.dead = True
-                return 'dead'
+        # out of window
+        if(self.dot.x < 0 or self.dot.x > self.win_size[0] or self.dot.y < 0 or self.dot.y > self.win_size[1]):
+            self.dead = True
+            self.calculate_fitness()
+            return 'dead'
+        # no more steps
+        elif(self.step == len(directions)):
+            self.dead = True
+            self.calculate_fitness()
+            return 'dead'
+        # hit the goal
+        elif(self.distance_to_goal() < self.radius):
+            self.finished = True
+            self.dot.color = (0, 0, 255)
+            self.calculate_fitness()
+            return 'finished'
+        # keep moving
+        else:
+            self.dot.x+=directions[self.step][0]*10
+            self.dot.y+=directions[self.step][1]*10
             self.step += 1
 
     def distance_to_goal(self):
-        # calculate the distance between the dot last position and the target
-        distance = sqrt((self.goal_position[0]-self.position[0])
-                        ** 2 + (self.goal_position[1]-self.position[1])**2)
-        # print('distance', round(distance, 4), 'radius', self.radius, 'is_best', self.is_best)
-        # print('distance to goal', distance)
+        distance = float(sqrt((self.goal.dot.x-self.dot.x)
+                        ** 2 + (self.goal.dot.y-self.dot.y)**2))
 
         return distance
 
     def calculate_fitness(self):
-        # if(dot.finished):
-        #     fitness = 1.0/16.0 + 100000.0/float(dot.index*dot.index)
-        # else:
-        #     distance_to_goal = dot.distance_to_goal()
-        #     fitness = 1.0/(distance_to_goal*distance_to_goal)
-        pass
+        if(self.finished):
+            fitness = 1.0/16.0 + 100000.0/float(self.step**2)
+        else:
+            fitness = 1.0/(self.distance_to_goal()**2)
+
+        self.fitness = fitness
 
     def mutate(self):
-        self.brain.mutate()
+        self.brain.mutate(mutation_rate=0.1)
+
+    def clone(self, color=(0,0,0)):
+        clone = Element(goal=self.goal, brain_size=self.brain_size, radius=self.radius, batch=self.batch, win_size=self.win_size, color=color)
+        clone.brain = self.brain.clone()
+        return clone
