@@ -64,7 +64,7 @@ class Element():
 
     def calculate_fitness(self):
         if(self.finished):
-            fitness = 1.0/16.0 + 100000.0/float(self.step**2)
+            fitness = 1.0/16.0 + 100000.0/float(self.step)
         else:
             fitness = 1.0/(self.distance_to_goal()**2)
 
