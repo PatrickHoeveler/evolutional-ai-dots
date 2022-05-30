@@ -3,7 +3,6 @@ from math import sqrt
 import random
 from typing import Tuple
 import pyglet
-from sympy import symbols, Eq, solve
 from brain import Brain
 
 
