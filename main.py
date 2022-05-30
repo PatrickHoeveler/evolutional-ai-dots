@@ -10,9 +10,9 @@ WIDTH = 800   # Game Window Width
 HEIGHT = 700  # Game Window Height
 BORDER = 10   # Walls Thickness/Border Thickness
 RADIUS = 3
-POPULATION_SIZE = 5
-BRAIN_SIZE = 100
-VELOCITY = 20
+POPULATION_SIZE = 200
+BRAIN_SIZE = 50
+VELOCITY = 30
 
 
 class Window(pyglet.window.Window):
@@ -39,8 +39,8 @@ class Window(pyglet.window.Window):
         self.set_elements()
 
     def set_obstacles(self):
-        start_point = (WIDTH*1/3, HEIGHT*2/3)
-        end_point = (WIDTH*2/3, HEIGHT*2/3)
+        start_point = (0, HEIGHT*2/3)
+        end_point = (WIDTH*4/7, HEIGHT*2/3)
         obstacle = Obstacle(position=(start_point+end_point), width=3, batch=self.main_batch)
         self.obstacles.append(obstacle)
 

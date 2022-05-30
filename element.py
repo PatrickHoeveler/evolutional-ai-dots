@@ -40,7 +40,7 @@ class Element():
         self.obstacles = obstacles
         self.brain_size = brain_size
         self.brain = Brain(size=brain_size)
-        self.init_position = (win_size[0]/2, win_size[1]/2)
+        self.init_position = (win_size[0]/2, win_size[1]*1/20)
         self.radius = radius
         self.batch = batch
         self.win_size = win_size
@@ -76,7 +76,7 @@ class Element():
                 self.dead = True
                 self.dot.color = (0, 0, 255)
                 self.dot.y = self.obstacles[0].position[1]
-                self.calculate_fitness()
+                self.calculate_fitness(manipulator=90)
                 return 'dead'
             # keep moving
             else:
@@ -91,43 +91,14 @@ class Element():
         return self.distance_to_goal() < self.radius
 
 
-    def solve_b(self, m, point):
-        b = point[1] - m*point[0]
-        return b
-
-    def get_equation(self, point_d, point_q, x, y)->Eq:
-        m = (point_q[1]-point_d[1])/(point_q[0]-point_d[0])
-        b = self.solve_b(m, point_d)
-        
-        # y = mx+b
-        # 0 = mx+b-y
-        eq = Eq(m*x + b - y)
-        return eq
-
     def check_obstacle_collision(self):
-        # for all obstacles
         obstacle = self.obstacles[0]
-        current_point = (self.dot.x,self.dot.y)
-        next_point = (self.dot.x+self.brain.directions[self.step][0], self.dot.y+self.brain.directions[self.step][1])
-
-        x, y = symbols('x y')
-        eq_element = self.get_equation(current_point, next_point, x, y)
-        eq_obstacle = self.get_equation(obstacle.position[:2], obstacle.position[2:4], x, y)
-        sol = solve((eq_element, eq_obstacle),(x, y))
-
-        if(len(sol)>0):
-            intersect_x = sol[x]
-            print('intersect_x', intersect_x)
-
-            if(intersect_x > obstacle.position[0] and intersect_x < obstacle.position[2] and next_point[1]>=obstacle.position[1]):
-                print('sol', sol)
-                print('intersected')
-                return True
-            else:
-                return False
-        else:
-            return False
-
+        if(self.dot.x > obstacle.position[0] and self.dot.x < obstacle.position[2] and 
+           self.dot.y < obstacle.position[1]+self.velocity and self.dot.y > obstacle.position[1]-self.velocity):
+            return True
+        return False
+    
+    
     def distance_to_goal(self):
         distance = float(sqrt((self.goal.dot.x-self.dot.x)
                               ** 2 + (self.goal.dot.y-self.dot.y)**2))
@@ -136,16 +107,16 @@ class Element():
 
 
 
-    def calculate_fitness(self):
+    def calculate_fitness(self, manipulator=1.0):
         if(self.finished):
-            fitness = 1.0/16.0 + 100000.0/float(self.step)
+            fitness = 1000000.0/float(self.step)
         else:
-            fitness = 1.0/(self.distance_to_goal()**2)
+            fitness = 1.0/(self.distance_to_goal()**manipulator)
 
         self.fitness = fitness
 
     def mutate(self):
-        self.brain.mutate(mutation_rate=0.1)
+        self.brain.mutate(mutation_rate=0.01)
 
     def clone(self, color=(0, 0, 0)):
         clone = Element(goal=self.goal, obstacles=self.obstacles, brain_size=self.brain_size, radius=self.radius,
