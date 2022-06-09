@@ -1,4 +1,3 @@
-from turtle import pos
 import numpy as np
 import pyglet
 from pyglet import shapes
