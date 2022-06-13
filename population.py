@@ -54,14 +54,18 @@ class Population:
 
         # TODO: if the best dot of the population is not increasing its fitness for a while,
         # then create more copies of it
+
+        # remove elements which have worse fitness then worst elements in iteration before
+
         if(self.best_fitness == best_element.fitness):
             self.best_fitness_not_increased_count += 1
         else:
             self.best_fitness_not_increased_count = 0
             self.best_fitness = best_element.fitness
         if(self.best_fitness_not_increased_count > 10):
-            for i in range(int(self.size*0.05)):
-                new_generation.append(best_element.clone())
+            # for i in range(int(self.size*0.99)):
+            #     new_generation.append(best_element.clone())
+            pass
 
         print('best_element.fitness', best_element.fitness,
               'self.best_fitness_not_increased_count', self.best_fitness_not_increased_count)

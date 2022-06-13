@@ -18,17 +18,17 @@ class Goal():
 
 class Obstacle():
     def __init__(self, position: Tuple, width: int, batch):
-        self.position = position # (x,y, x2,y2)
+        self.position = position  # (x,y, x2,y2)
         self.batch = batch
         self.width = width
         self.color = (255, 192, 203)
         self.line = pyglet.shapes.Line(x=self.position[0],
-                                            y=self.position[1],
-                                            x2=self.position[2],
-                                            y2=self.position[3],
-                                            width=self.width,
-                                            color=self.color,
-                                            batch=self.batch)
+                                       y=self.position[1],
+                                       x2=self.position[2],
+                                       y2=self.position[3],
+                                       width=self.width,
+                                       color=self.color,
+                                       batch=self.batch)
 
 
 class Element():
@@ -89,28 +89,24 @@ class Element():
     def check_goal_collision(self):
         return self.distance_to_goal() < self.radius
 
-
     def check_obstacle_collision(self):
         obstacle = self.obstacles[0]
-        if(self.dot.x > obstacle.position[0] and self.dot.x < obstacle.position[2] and 
+        if(self.dot.x > obstacle.position[0] and self.dot.x < obstacle.position[2] and
            self.dot.y < obstacle.position[1]+self.velocity and self.dot.y > obstacle.position[1]-self.velocity):
             return True
         return False
-    
-    
+
     def distance_to_goal(self):
         distance = float(sqrt((self.goal.dot.x-self.dot.x)
                               ** 2 + (self.goal.dot.y-self.dot.y)**2))
 
         return distance
 
-
-
     def calculate_fitness(self, manipulator=1.0):
         if(self.finished):
-            fitness = 1000000.0/float(self.step)
+            fitness = 100000.0 / float(self.step*self.step)
         else:
-            fitness = 1.0/(self.distance_to_goal()**manipulator)
+            fitness = 1.0/(self.distance_to_goal()*manipulator)
 
         self.fitness = fitness
 
